@@ -13,16 +13,17 @@ def adk_skill(func):
     return FunctionTool(func)
 
 @adk_skill
-def query_tenant_events(tenant_ids: list[str], marker: str) -> list[dict]:
+def query_tenant_events(tool_context: Any, tenant_ids: list[str], marker: str) -> dict:
     """
     Queries the SQLite Event table for events matching the specified marker across the given tenants.
 
     Args:
+        tool_context: The ADK Context object.
         tenant_ids: A list of tenant IDs to query.
         marker: The text marker to find in prompts or completions (e.g. "[REDACTED-CC]").
 
     Returns:
-        A list of dictionaries containing tenant_id, user_id, event_id, model, and timestamp.
+        A dictionary containing the list of events and optional warnings.
     """
     logger.info(f"Executing query_tenant_events for tenants {tenant_ids} with marker '{marker}'")
     
@@ -45,7 +46,19 @@ def query_tenant_events(tenant_ids: list[str], marker: str) -> list[dict]:
             })
             
         logger.info(f"Query found {len(events_list)} events matching '{marker}' across tenants {tenant_ids}")
-        return events_list
+        
+        # Check for tenants with zero results
+        found_tenants = {e["tenant_id"] for e in events_list}
+        tenants_with_zero = [tid for tid in tenant_ids if tid not in found_tenants]
+        
+        result = {
+            "events": events_list
+        }
+        if tenants_with_zero:
+            logger.warning(f"No events found for tenants: {tenants_with_zero}")
+            result["warning"] = f"No events found for: {tenants_with_zero}"
+            
+        return result
     except Exception as ex:
         logger.error(f"Error querying tenant events: {ex}")
         raise ex

@@ -38,6 +38,19 @@ def validate_k_anonymity(
           "failed_gates_count": int
         }
     """
+    # Prefer scalars, fall back to computing from collections
+    tc = finding.get("tenant_count")
+    if tc is None and "affected_tenants" in finding:
+        tc = len(finding["affected_tenants"])
+    
+    du = finding.get("distinct_users_count")
+    if du is None and "distinct_users" in finding:
+        du = len(finding["distinct_users"])
+    
+    mept = finding.get("min_events_per_tenant")
+    if mept is None and "events_per_tenant" in finding:
+        mept = min(finding["events_per_tenant"].values()) if finding["events_per_tenant"] else 0
+
     # Helper to get size of collection safely
     def safe_len(x):
         if isinstance(x, (list, dict, set)):
@@ -46,8 +59,7 @@ def validate_k_anonymity(
             return 1 if x else 0
         return 0
 
-    # Dynamically extract / compute metrics from the finding dict to handle different structures
-    tc = finding.get("tenant_count")
+    # Extra fallback logic if anything is still None
     if tc is None:
         affected_tenants = finding.get("affected_tenants", [])
         events_per_tenant = finding.get("events_per_tenant", {})
@@ -61,7 +73,6 @@ def validate_k_anonymity(
             safe_len(details_per_tenant)
         )
         
-    du = finding.get("distinct_users_count")
     if du is None:
         distinct_users = finding.get("distinct_users")
         findings_nested = finding.get("findings", {})
@@ -95,7 +106,6 @@ def validate_k_anonymity(
                         
         du = len(all_users) if all_users else 0
             
-    mept = finding.get("min_events_per_tenant")
     if mept is None:
         events_per_tenant = finding.get("events_per_tenant", {})
         findings_nested = finding.get("findings", {})
@@ -131,6 +141,9 @@ def validate_k_anonymity(
             mept = min(candidates)
         else:
             mept = 0
+
+    # Apply 3-gate rule with fallback to 0 if anything still missing
+    tc, du, mept = tc or 0, du or 0, mept or 0
 
     gates = {
         "tenant_count": {
