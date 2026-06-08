@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "nightswatch-threat-intel-agents"
+version = "0.1.0"
+description = "FastAPI backend for threat intel agents using Google ADK"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "google-adk[otel-gcp]==1.30.0",
+    "fastapi",
+    "uvicorn",
+    "sqlalchemy",
+    "sse-starlette"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+

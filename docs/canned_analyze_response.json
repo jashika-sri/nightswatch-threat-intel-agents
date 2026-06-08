@@ -1,0 +1,44 @@
+{
+    "status": "success",
+    "scan_time": "2026-06-08T04:57:22.137664",
+    "patterns_detected": [
+        {
+            "pattern_id": "credit_card_in_completion",
+            "name": "Credit Card Leak in LLM Completions",
+            "description": "Detected system responses containing credit card patterns across multiple tenants.",
+            "k_anonymity_passed": true,
+            "affected_tenants_count": 5,
+            "affected_tenants": [
+                "finpay",
+                "healthco",
+                "shopfast",
+                "eduplatform",
+                "devtools"
+            ],
+            "total_events": 55,
+            "distinct_users": 12,
+            "risk_level": "high",
+            "confidence": 0.95,
+            "marker_detected": "[REDACTED-CC]",
+            "remediation": "Review downstream response-filtering policies and enforce stricter DLP checks."
+        },
+        {
+            "pattern_id": "prompt_injection_attempt",
+            "name": "System Prompt Injection Attack",
+            "description": "Deliberate prompt injection attempts to bypass safety filters and hijack system instructions.",
+            "k_anonymity_passed": false,
+            "affected_tenants_count": 3,
+            "affected_tenants": [
+                "finpay",
+                "shopfast",
+                "devtools"
+            ],
+            "total_events": 15,
+            "distinct_users": 4,
+            "risk_level": "critical",
+            "confidence": 0.88,
+            "marker_detected": "[INJECTION-ATTEMPT]",
+            "remediation": "Apply input validation, strengthen base prompt instructions, and restrict user-supplied parameters."
+        }
+    ]
+}

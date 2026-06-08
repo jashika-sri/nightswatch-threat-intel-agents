@@ -1,0 +1,1 @@
+# ADK skills package placeholder
