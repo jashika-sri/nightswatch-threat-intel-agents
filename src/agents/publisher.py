@@ -10,7 +10,7 @@ insight_publisher = Agent(
 
 YOUR EXECUTION TRIGGER:
 You are provided with the published patterns list from the session state:
-{published_patterns}
+{published_patterns?}
 
 Ignore the user's initial message asking to 'Scan' and ignore previous scanning or validation text.
 If the published patterns list is empty, contains no items, or is not present, do not call any tools and respond: 'No published patterns to enrich.'

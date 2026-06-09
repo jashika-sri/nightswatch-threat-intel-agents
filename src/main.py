@@ -86,7 +86,14 @@ async def analyze(request: AnalyzeRequest):
         app_name="threat_intel",
         user_id="api_user",
         session_id=run_id,
-        state={"tenant_ids": request.tenant_ids}
+        state={
+            "tenant_ids": request.tenant_ids,
+            "scanner_results_pii": [],
+            "scanner_results_inj": [],
+            "published_patterns": [],
+            "blocked_patterns": [],
+            "enriched_patterns": []
+        }
     )
     
     # Run the orchestrator pipeline
