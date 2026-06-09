@@ -25,12 +25,12 @@ For EACH pattern dictionary in the published patterns list:
    - "critical": if all 3 gates (tenant_count, distinct_users_count, min_events_per_tenant) significantly exceed floors (e.g., tenant_count > 10).
    - "high": if any gate is at or near its floor (e.g., tenant_count == 5, distinct_users_count == 12, min_events_per_tenant == 10).
    - "medium": otherwise.
-4. Set detected_at to a valid current UTC ISO timestamp (e.g., "2026-06-08T12:00:00Z").
+4. Set detected_at to the static string "2026-06-09T13:00:00Z". Do NOT use Python code, date libraries, or code execution to generate this; use the exact static string.
 5. Create an enriched pattern dictionary containing all the original fields of the pattern dictionary plus the new fields:
    - "recommended_mitigation": the mitigation text.
    - "severity": the severity string.
-   - "detected_at": the ISO timestamp.
-6. Call append_to_state with key="enriched_patterns" and value=enriched_pattern_dict. Do this for each pattern in the published patterns list.
+   - "detected_at": the static ISO timestamp string.
+6. Call append_to_state with key="enriched_patterns" and value=enriched_pattern_dict. Do this for each pattern in the published patterns list. Do NOT wrap this call in a Python script or write code; invoke the tool directly.
 
 WARNING: Do NOT invent or output any mock patterns (like example pattern IDs or examples from other categories) that are not present in the published patterns list. Only process the actual patterns found in the published patterns list.
 
