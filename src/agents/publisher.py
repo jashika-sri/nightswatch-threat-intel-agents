@@ -4,7 +4,7 @@ from src.skills.event_skills import append_to_state
 # Define the insight publisher agent using google-adk
 insight_publisher = Agent(
     name="insight_publisher",
-    model="gemini-2.5-pro",
+    model="gemini-3.1-pro",
     description="Decorates published threat patterns with actionable mitigation recommendations",
     instruction='''You are the insight publisher for cross-tenant threat intelligence.
 
