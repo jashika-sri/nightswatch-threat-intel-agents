@@ -5,7 +5,7 @@ from src.skills.event_skills import query_tenant_events, append_to_state
 pii_exposure_scanner = Agent(
     name="pii_exposure_scanner",
     description="Scans events across tenants for PII exposure patterns (credit card data leaking into completions)",
-    model="gemini-2.5-flash",
+    model="gemini-2.5-pro",
     instruction=(
         "You are the PII exposure scanner agent. Perform the following steps precisely:\n\n"
         "1. Retrieve the list of all tenant IDs to scan from the session state key 'tenant_ids' (i.e. state['tenant_ids']).\n"
@@ -41,7 +41,7 @@ pii_exposure_scanner = Agent(
 # Define the Prompt Injection scanner agent using google-adk
 prompt_injection_scanner = Agent(
     name="prompt_injection_scanner",
-    model="gemini-2.5-flash",
+    model="gemini-2.5-pro",
     description="Scans tenant events for prompt injection attempts",
     instruction=(
         "You are the prompt injection scanner agent. Perform the following steps precisely:\n\n"
