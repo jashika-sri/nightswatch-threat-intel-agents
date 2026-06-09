@@ -4,7 +4,7 @@ from src.skills.validation_skills import validate_k_anonymity
 
 k_anonymity_validator = Agent(
     name="k_anonymity_validator",
-    model="gemini-3.1-pro",
+    model="gemini-2.5-pro",
     description="Applies privacy-preservation gates to scanner findings, separating publishable insights from blocked patterns",
     instruction=(
         "You are the privacy gate for cross-tenant threat intelligence. Perform the following steps precisely:\n\n"
