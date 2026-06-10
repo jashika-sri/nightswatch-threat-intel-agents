@@ -5,7 +5,7 @@ from src.skills.event_skills import append_to_state
 
 # Configured Gemini model with automatic retries for rate limits
 gemini_model = Gemini(
-    model="gemini-2.5-flash",
+    model="gemini-2.5-pro",
     retry_options=types.HttpRetryOptions(initial_delay=2, attempts=5)
 )
 
