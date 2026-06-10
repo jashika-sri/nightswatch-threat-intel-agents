@@ -137,11 +137,25 @@ async def analyze(request: AnalyzeRequest):
                 "enriched_patterns": final.state.get("enriched_patterns", [])
             }
         except Exception as e:
-            err_msg = str(e)
-            if "429" in err_msg or "resource_exhausted" in err_msg or "rate limit" in err_msg.lower():
+            # Extract nested exceptions if it is an ExceptionGroup (common in asyncio.TaskGroup)
+            exceptions_to_check = []
+            # Check using duck typing or isinstance to be safe
+            if hasattr(e, "exceptions") and isinstance(getattr(e, "exceptions"), (list, tuple)):
+                exceptions_to_check = list(e.exceptions)
+            elif isinstance(e, BaseException):
+                exceptions_to_check = [e]
+                
+            is_rate_limit = False
+            for ex in exceptions_to_check:
+                ex_str = str(ex).lower()
+                if "429" in ex_str or "resource_exhausted" in ex_str or "rate limit" in ex_str or "exhausted" in ex_str:
+                    is_rate_limit = True
+                    break
+                    
+            if is_rate_limit:
                 if attempt < max_retries - 1:
-                    sleep_time = 3 * (attempt + 1)
-                    logger.warning(f"Rate limit / 429 hit during analyze. Retrying in {sleep_time}s... Error: {e}")
+                    sleep_time = 4 * (attempt + 1)
+                    logger.warning(f"Rate limit / 429 hit during analyze. Retrying in {sleep_time}s... (Attempt {attempt+1}/{max_retries})")
                     await asyncio.sleep(sleep_time)
                     continue
             raise e
