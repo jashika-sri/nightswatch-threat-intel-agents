@@ -137,9 +137,9 @@ async def analyze(request: AnalyzeRequest):
                 "enriched_patterns": final.state.get("enriched_patterns", [])
             }
         except Exception as e:
+            logger.error(f"POST /analyze failed with exception of type {type(e)}: {repr(e)}")
             # Extract nested exceptions if it is an ExceptionGroup (common in asyncio.TaskGroup)
             exceptions_to_check = []
-            # Check using duck typing or isinstance to be safe
             if hasattr(e, "exceptions") and isinstance(getattr(e, "exceptions"), (list, tuple)):
                 exceptions_to_check = list(e.exceptions)
             elif isinstance(e, BaseException):
