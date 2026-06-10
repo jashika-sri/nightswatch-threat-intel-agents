@@ -1,11 +1,19 @@
 from google.adk import Agent
+from google.adk.models.google_llm import Gemini
+from google.genai import types
 from src.skills.event_skills import query_tenant_events, append_to_state
+
+# Configured Gemini model with automatic retries for rate limits
+gemini_model = Gemini(
+    model="gemini-2.5-flash",
+    retry_options=types.HttpRetryOptions(initial_delay=2, attempts=5)
+)
 
 # Define the PII exposure scanner agent using google-adk
 pii_exposure_scanner = Agent(
     name="pii_exposure_scanner",
     description="Scans events across tenants for PII exposure patterns (credit card data leaking into completions)",
-    model="gemini-2.5-flash",
+    model=gemini_model,
     instruction=(
         "You are the PII exposure scanner agent. Perform the following steps precisely:\n\n"
         "1. Retrieve the list of all tenant IDs to scan from the session state key 'tenant_ids' (i.e. state['tenant_ids']). You MUST use the exact raw string IDs from this list (e.g. 'devtools', not 'devtoolsinc'). Do NOT alter the IDs or confuse them with tenant names.\n"
@@ -41,7 +49,7 @@ pii_exposure_scanner = Agent(
 # Define the Prompt Injection scanner agent using google-adk
 prompt_injection_scanner = Agent(
     name="prompt_injection_scanner",
-    model="gemini-2.5-flash",
+    model=gemini_model,
     description="Scans tenant events for prompt injection attempts",
     instruction=(
         "You are the prompt injection scanner agent. Perform the following steps precisely:\n\n"

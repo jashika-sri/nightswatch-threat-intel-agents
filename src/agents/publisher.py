@@ -1,10 +1,18 @@
 from google.adk.agents import Agent
+from google.adk.models.google_llm import Gemini
+from google.genai import types
 from src.skills.event_skills import append_to_state
+
+# Configured Gemini model with automatic retries for rate limits
+gemini_model = Gemini(
+    model="gemini-2.5-flash",
+    retry_options=types.HttpRetryOptions(initial_delay=2, attempts=5)
+)
 
 # Define the insight publisher agent using google-adk
 insight_publisher = Agent(
     name="insight_publisher",
-    model="gemini-2.5-flash",
+    model=gemini_model,
     description="Decorates published threat patterns with actionable mitigation recommendations",
     instruction='''You are the insight publisher for cross-tenant threat intelligence.
 

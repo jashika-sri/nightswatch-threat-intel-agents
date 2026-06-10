@@ -1,10 +1,18 @@
 from google.adk.agents import Agent
+from google.adk.models.google_llm import Gemini
+from google.genai import types
 from src.skills.event_skills import append_to_state
 from src.skills.validation_skills import validate_k_anonymity
 
+# Configured Gemini model with automatic retries for rate limits
+gemini_model = Gemini(
+    model="gemini-2.5-flash",
+    retry_options=types.HttpRetryOptions(initial_delay=2, attempts=5)
+)
+
 k_anonymity_validator = Agent(
     name="k_anonymity_validator",
-    model="gemini-2.5-flash",
+    model=gemini_model,
     description="Applies privacy-preservation gates to scanner findings, separating publishable insights from blocked patterns",
     instruction=(
         "You are the privacy gate for cross-tenant threat intelligence. Perform the following steps precisely:\n\n"
