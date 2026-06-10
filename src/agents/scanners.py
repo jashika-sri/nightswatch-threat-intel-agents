@@ -5,7 +5,7 @@ from src.skills.event_skills import query_tenant_events, append_to_state
 
 # Configured Gemini model with automatic retries for rate limits
 gemini_model = Gemini(
-    model="gemini-2.5-pro",
+    model="gemini-2.5-flash",
     retry_options=types.HttpRetryOptions(initial_delay=2, attempts=5)
 )
 
@@ -16,7 +16,7 @@ pii_exposure_scanner = Agent(
     model=gemini_model,
     instruction=(
         "You are the PII exposure scanner agent. Perform the following steps precisely:\n\n"
-        "1. Retrieve the list of all tenant IDs to scan from the session state key 'tenant_ids' (i.e. state['tenant_ids']). You MUST use the exact raw string IDs from this list (e.g. 'devtools', not 'devtoolsinc'). Do NOT alter the IDs or confuse them with tenant names.\n"
+        "1. Retrieve the list of all tenant IDs to scan from the session state: {tenant_ids?}. You MUST use the exact raw string IDs from this list (e.g. 'devtools', not 'devtoolsinc'). Do NOT alter the IDs or confuse them with tenant names.\n"
         "2. Call the tool `query_tenant_events` EXACTLY ONCE with the list of all provided tenant IDs and marker='[REDACTED-CC]'. Do NOT call this tool in a loop or iterate per tenant.\n"
         "3. From the returned dictionary, get the list of events from the 'events' key.\n"
         "4. Calculate the following values from the list of events:\n"
@@ -53,7 +53,7 @@ prompt_injection_scanner = Agent(
     description="Scans tenant events for prompt injection attempts",
     instruction=(
         "You are the prompt injection scanner agent. Perform the following steps precisely:\n\n"
-        "1. Retrieve the list of all tenant IDs to scan from the session state key 'tenant_ids' (i.e. state['tenant_ids']). You MUST use the exact raw string IDs from this list (e.g. 'devtools', not 'devtoolsinc'). Do NOT alter the IDs or confuse them with tenant names.\n"
+        "1. Retrieve the list of all tenant IDs to scan from the session state: {tenant_ids?}. You MUST use the exact raw string IDs from this list (e.g. 'devtools', not 'devtoolsinc'). Do NOT alter the IDs or confuse them with tenant names.\n"
         "2. Call the tool `query_tenant_events` EXACTLY ONCE with the list of all provided tenant IDs and marker='[INJECTION-ATTEMPT]'. Do NOT call this tool in a loop or iterate per tenant.\n"
         "3. From the returned dictionary, get the list of events from the 'events' key.\n"
         "4. Calculate the following values from the list of events:\n"

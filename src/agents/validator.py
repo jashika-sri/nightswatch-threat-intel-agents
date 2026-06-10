@@ -6,7 +6,7 @@ from src.skills.validation_skills import validate_k_anonymity
 
 # Configured Gemini model with automatic retries for rate limits
 gemini_model = Gemini(
-    model="gemini-2.5-pro",
+    model="gemini-2.5-flash",
     retry_options=types.HttpRetryOptions(initial_delay=2, attempts=5)
 )
 
